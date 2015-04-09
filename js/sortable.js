@@ -42,6 +42,11 @@
         return;
       }
       if (table.getAttribute('data-sortable-initialized') === 'true') {
+          // AUSTIN ADDED
+          ths = table.querySelectorAll('th[data-sorted=true]');
+          if(ths.length) {
+              ths[0].dispatchEvent(new MouseEvent(clickEvent));
+          }
         return;
       }
       table.setAttribute('data-sortable-initialized', 'true');
@@ -81,11 +86,13 @@
           row = _ref[_j];
           rowArray.push([sortable.getNodeValue(row.cells[i]), row]);
         }
-        if (sorted) {
-          rowArray.reverse();
-        } else {
+        //if (sorted) {
+        //  rowArray.reverse();
+        //} else {
+          // AUSTIN - I made this edit.  See the type.compare functions below.  basically it compares it against hte default and just reverses the sort.
+          type.compare.dir = newSortedDirection;
           rowArray.sort(type.compare);
-        }
+        //}
         _results = [];
         for (_k = 0, _len2 = rowArray.length; _k < _len2; _k++) {
           rowArrayObject = rowArray[_k];
@@ -127,6 +134,7 @@
       numeric: {
         defaultSortDirection: 'descending',
         compare: function(a, b) {
+            var diff = (sortable.types.numeric.compare.dir == sortable.types.numeric.defaultSortDirection) ? 1 : -1;
           var aa, bb;
           aa = parseFloat(a[0].replace(/[^0-9.-]/g, ''), 10);
           bb = parseFloat(b[0].replace(/[^0-9.-]/g, ''), 10);
@@ -136,18 +144,20 @@
           if (isNaN(bb)) {
             bb = 0;
           }
-          return bb - aa;
+          return (bb - aa) * diff;
         }
       },
       alpha: {
         defaultSortDirection: 'ascending',
         compare: function(a, b) {
-          return a[0].localeCompare(b[0]);
+            var diff = (sortable.types.alpha.compare.dir == sortable.types.alpha.defaultSortDirection) ? 1 : -1;
+          return a[0].localeCompare(b[0]) * diff;
         }
       },
       date: {
         defaultSortDirection: 'ascending',
         compare: function(a, b) {
+            var diff = (sortable.types.date.compare.dir == sortable.types.date.defaultSortDirection) ? 1 : -1;
           var aa, bb;
           aa = Date.parse(a[0]);
           bb = Date.parse(b[0]);
@@ -157,7 +167,7 @@
           if (isNaN(bb)) {
             bb = 0;
           }
-          return aa - bb;
+          return (aa - bb) * diff;
         }
       }
     }
