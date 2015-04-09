@@ -45,6 +45,8 @@
           // AUSTIN ADDED
           ths = table.querySelectorAll('th[data-sorted=true]');
           if(ths.length) {
+              var dir = ths[0].getAttribute('data-sorted-direction');
+              ths[0].setAttribute('data-sorted-direction', (dir == 'descending')?'ascending':'descending');
               ths[0].dispatchEvent(new MouseEvent(clickEvent));
           }
         return;
